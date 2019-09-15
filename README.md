@@ -29,7 +29,7 @@ Add this to your module's build.gradle file (make sure the version matches the J
 ```java
 dependencies {
 	...
-	        implementation 'com.github.OmarBoshra:SimpleStylingLibrary:Tag'
+	        implementation 'com.github.OmarBoshra:SimpleStylingLibrary:1.0'
 }
 ```
 
