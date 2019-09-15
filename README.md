@@ -37,9 +37,9 @@ dependencies {
 # **Usage**
 
 Just this one method 
-
+```java
 SimpleStyling.Format(TypeOrSize,SelectionStart,SelectionEnd, EditTextName ,TextSizeIncrement ,HighLightColor);
-
+```
 >     PARAMETERS
 > 
 >    
@@ -74,6 +74,11 @@ returns an array with the starting and ending indexies so a button click can be 
 ```java
             m.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_VARIATION_FILTER | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_CLASS_TEXT);
 ```        
+
+This is an app with a full implementation here :-
+
+https://github.com/OmarBoshra/Simple-text-styling-Android/blob/master/README.md
+
 Good luck
 
 
