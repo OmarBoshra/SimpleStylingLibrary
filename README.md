@@ -46,6 +46,7 @@ PARAMETERS
 
    
 **TypeOrSize**: required operation to be performed on the selected text
+    
     -1 makes text bold
     -2 Highlights text provided the color is in integer 'HighLightColor'
     -3 underline
