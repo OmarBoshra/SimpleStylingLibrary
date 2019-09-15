@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/mainv"
+    android:animateLayoutChanges="true"
+
+    >
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_above="@+id/tabmain"
+
+        >
+
+        <EditText
+            android:id="@+id/testEdiText"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:background="@android:color/white"
+
+            android:fontFamily="serif"
+
+
+
+            android:gravity="center"
+            android:padding="4dp"
+            android:textColorHint="#000000"
+            android:hint="📝"
+            android:textColorHighlight="#00fff7"
+            android:textSize="72dp"
+
+
+            />
+
+    </ScrollView>
+
+
+
+    <LinearLayout
+        android:id="@+id/tabmain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:baselineAligned="false"
+
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@color/trans"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <Button
+
+                android:id="@+id/bold"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@color/trans"
+                android:text="B"
+                android:textColor="#07453f"
+                android:textSize="25dp"
+
+                android:textStyle="bold"
+                android:typeface="serif"
+                />
+            <Button
+                android:id="@+id/itallic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@color/trans"
+                android:text="I"
+                android:textColor="#07453f"
+                android:textSize="25dp"
+                android:textStyle="italic"
+                android:typeface="serif" />
+
+            <Button
+                android:id="@+id/underline"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@color/trans"
+                android:text="U"
+                android:textColor="#07453f"
+                android:textSize="25dp"
+                android:typeface="serif" />
+
+            <Button
+                android:id="@+id/highlight"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2.4"
+                android:background="#f7ff04"
+                android:text="A"
+                android:textColor="#07453f"
+                android:textSize="25dp"
+                android:typeface="serif" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+
+            android:background="@color/trans"
+
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/decreaseSize"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@color/trans"
+                android:text="-"
+                android:textColor="#07453f"
+                android:textSize="27dp"
+                android:typeface="serif" />
+
+            <Button
+                android:id="@+id/increaseSize"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@color/trans"
+                android:text="+"
+                android:textColor="#07453f"
+                android:textSize="27dp"
+                android:typeface="serif" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
+
