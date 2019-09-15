@@ -37,9 +37,13 @@ dependencies {
 # **Usage**
 
 Just this one method 
+
 ```java
-SimpleStyling.Format(TypeOrSize,SelectionStart,SelectionEnd, EditTextName ,TextSizeIncrement ,HighLightColor);
+
+	SimpleStyling.Format(TypeOrSize,SelectionStart,SelectionEnd, EditTextName ,TextSizeIncrement ,HighLightColor);
+
 ```
+
 PARAMETERS
 
    
