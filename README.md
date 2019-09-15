@@ -40,27 +40,27 @@ Just this one method
 ```java
 SimpleStyling.Format(TypeOrSize,SelectionStart,SelectionEnd, EditTextName ,TextSizeIncrement ,HighLightColor);
 ```
->     PARAMETERS
-> 
->    
->     **TypeOrSize**: required operation to be performed on the selected text
->     -1 makes text bold
->     -2 Highlights text provided the color is in integer 'HighLightColor'
->     -3 underline
->     -4 italic
->     0 Incremental increase/decrease of text size by amount of 'TextSizeIncrement'
->     (any size) changes text to a specific size
-> 
->     **SelectionStart** : start of selection
-> 
->     **SelectionEnd** : end of selection
-> 
->     **EditTextName** : name of the editText View
-> 
->     **TextSizeIncrement** : required incremental increase/decrease of text size +ve for increase and -ve for decrease
-> 
->     **HighLightColor** : required highlightColor of the text set to anything if the operation isn't highLight
-The library also includes an auto selection method so that the user doesn't have to highlight the text in order to format it:-
+PARAMETERS
+
+   
+**TypeOrSize**: required operation to be performed on the selected text
+    -1 makes text bold
+    -2 Highlights text provided the color is in integer 'HighLightColor'
+    -3 underline
+    -4 italic
+    0 Incremental increase/decrease of text size by amount of 'TextSizeIncrement'
+    (any size) changes text to a specific size
+
+**SelectionStart** : start of selection
+
+**SelectionEnd** : end of selection
+
+**EditTextName** : name of the editText View
+
+**TextSizeIncrement** : required incremental increase/decrease of text size +ve for increase and -ve for decrease
+
+**HighLightColor** : required highlightColor of the text set to anything if the operation isn't highLight
+
 
 The function 
 
