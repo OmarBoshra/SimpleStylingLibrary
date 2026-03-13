@@ -1,15 +1,14 @@
 package com.example.simplestylinglibraryproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.simplestyling.SimpleStyling;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     EditText TestEditText ;
 
     @Override
