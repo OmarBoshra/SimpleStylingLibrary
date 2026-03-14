@@ -1,7 +1,8 @@
 package com.example.simplestyling;
 
 import android.graphics.Typeface;
-import android.text.SpannableStringBuilder;
+import android.text.Editable;
+import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
@@ -25,41 +26,44 @@ public class SimpleStyling {
     public static void format(int TypeOrSize, int SelectionStart, int SelectionEnd, final EditText EditTextName, int TextSizeIncrement, int HighLightColor) {
         if (SelectionStart < 0 || SelectionEnd > EditTextName.length() || SelectionStart >= SelectionEnd) return;
 
-        int cursorStart = EditTextName.getSelectionStart();
-        int cursorEnd = EditTextName.getSelectionEnd();
-
-        // Use a builder for efficient, single-pass editing
-        SpannableStringBuilder builder = new SpannableStringBuilder(EditTextName.getText());
+        // Modifying the Editable directly is better for performance and IME compatibility
+        Editable editable = EditTextName.getText();
+        if (editable == null) return;
 
         switch (TypeOrSize) {
-            case -1: toggleStyle(builder, SelectionStart, SelectionEnd, Typeface.BOLD); break;
-            case -4: toggleStyle(builder, SelectionStart, SelectionEnd, Typeface.ITALIC); break;
-            case -3: toggleSimpleSpan(builder, SelectionStart, SelectionEnd, UnderlineSpan.class); break;
-            case -2: toggleColorSpan(builder, SelectionStart, SelectionEnd, HighLightColor); break;
+            case -1: toggleStyle(editable, SelectionStart, SelectionEnd, Typeface.BOLD); break;
+            case -4: toggleStyle(editable, SelectionStart, SelectionEnd, Typeface.ITALIC); break;
+            case -3: toggleSimpleSpan(editable, SelectionStart, SelectionEnd, UnderlineSpan.class); break;
+            case -2: toggleColorSpan(editable, SelectionStart, SelectionEnd, HighLightColor); break;
             case 0:
-                int currentSize = getExistingSize(builder, SelectionStart, SelectionEnd, (int) EditTextName.getTextSize());
-                applySizeSpan(builder, SelectionStart, SelectionEnd, Math.max(1, currentSize + TextSizeIncrement));
+                int currentSize = getExistingSize(editable, SelectionStart, SelectionEnd, (int) EditTextName.getTextSize());
+                applySizeSpan(editable, SelectionStart, SelectionEnd, Math.max(1, currentSize + TextSizeIncrement));
                 break;
             default:
-                if (TypeOrSize > 0) applySizeSpan(builder, SelectionStart, SelectionEnd, TypeOrSize);
+                if (TypeOrSize > 0) applySizeSpan(editable, SelectionStart, SelectionEnd, TypeOrSize);
                 break;
         }
-
-        EditTextName.setText(builder);
-        EditTextName.setSelection(cursorStart, cursorEnd);
     }
 
-    private static void toggleStyle(SpannableStringBuilder builder, int start, int end, int styleBit) {
+    private static void toggleStyle(Spannable builder, int start, int end, int styleBit) {
         boolean isAppliedEverywhere = true;
         for (int i = start; i < end; i++) {
             StyleSpan[] spans = builder.getSpans(i, i + 1, StyleSpan.class);
             boolean found = false;
-            for (StyleSpan s : spans) if ((s.getStyle() & styleBit) != 0) found = true;
+            for (StyleSpan s : spans) {
+                // Ignore system composing/spell-check spans
+                if ((s.getStyle() & styleBit) != 0 && (builder.getSpanFlags(s) & Spanned.SPAN_COMPOSING) == 0) {
+                    found = true;
+                    break;
+                }
+            }
             if (!found) { isAppliedEverywhere = false; break; }
         }
 
         StyleSpan[] spans = builder.getSpans(start, end, StyleSpan.class);
         for (StyleSpan span : spans) {
+            if ((builder.getSpanFlags(span) & Spanned.SPAN_COMPOSING) != 0) continue;
+
             int s = builder.getSpanStart(span);
             int e = builder.getSpanEnd(span);
             int currentStyle = span.getStyle();
@@ -77,46 +81,82 @@ public class SimpleStyling {
             for (int i = start; i < end; ) {
                 StyleSpan[] current = builder.getSpans(i, i + 1, StyleSpan.class);
                 int next = end;
-                if (current.length == 0) {
-                    StyleSpan[] nextSpans = builder.getSpans(i, end, StyleSpan.class);
-                    for (StyleSpan ns : nextSpans) next = Math.min(next, builder.getSpanStart(ns));
-                    builder.setSpan(new StyleSpan(styleBit), i, next, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } else {
-                    for (StyleSpan s : current) next = Math.min(next, builder.getSpanEnd(s));
+                boolean alreadyStyled = false;
+                for (StyleSpan s : current) {
+                    if ((s.getStyle() & styleBit) != 0 && (builder.getSpanFlags(s) & Spanned.SPAN_COMPOSING) == 0) {
+                        alreadyStyled = true;
+                        next = builder.getSpanEnd(s);
+                        break;
+                    }
                 }
-                i = next;
+
+                if (!alreadyStyled) {
+                    StyleSpan[] nextSpans = builder.getSpans(i, end, StyleSpan.class);
+                    for (StyleSpan ns : nextSpans) {
+                        if ((ns.getStyle() & styleBit) != 0 && (builder.getSpanFlags(ns) & Spanned.SPAN_COMPOSING) == 0) {
+                            next = Math.min(next, builder.getSpanStart(ns));
+                        }
+                    }
+                    builder.setSpan(new StyleSpan(styleBit), i, Math.min(next, end), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    i = next;
+                } else {
+                    i = next;
+                }
             }
         }
     }
 
-    private static void toggleSimpleSpan(SpannableStringBuilder builder, int start, int end, Class<? extends CharacterStyle> spanClass) {
+    private static void toggleSimpleSpan(Spannable builder, int start, int end, Class<? extends CharacterStyle> spanClass) {
         boolean isAppliedEverywhere = true;
         for (int i = start; i < end; i++) {
-            if (builder.getSpans(i, i + 1, spanClass).length == 0) { isAppliedEverywhere = false; break; }
+            boolean found = false;
+            for (Object s : builder.getSpans(i, i + 1, spanClass)) {
+                // Filter out system underlines
+                if ((builder.getSpanFlags(s) & Spanned.SPAN_COMPOSING) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) { isAppliedEverywhere = false; break; }
         }
 
         Object[] spans = builder.getSpans(start, end, spanClass);
         for (Object span : spans) {
+            if ((builder.getSpanFlags(span) & Spanned.SPAN_COMPOSING) != 0) continue;
+
             int s = builder.getSpanStart(span);
             int e = builder.getSpanEnd(span);
             builder.removeSpan(span);
-            if (s < start) trySetSpan(builder, spanClass, s, start);
-            if (e > end) trySetSpan(builder, spanClass, end, e);
+            if (s < start) applyNewSpan(builder, spanClass, s, start);
+            if (e > end) applyNewSpan(builder, spanClass, end, e);
         }
-        if (!isAppliedEverywhere) trySetSpan(builder, spanClass, start, end);
+        if (!isAppliedEverywhere) applyNewSpan(builder, spanClass, start, end);
     }
 
-    private static void toggleColorSpan(SpannableStringBuilder builder, int start, int end, int color) {
+    private static void applyNewSpan(Spannable builder, Class<?> spanClass, int start, int end) {
+        if (spanClass == UnderlineSpan.class) {
+            builder.setSpan(new UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+    }
+
+    private static void toggleColorSpan(Spannable builder, int start, int end, int color) {
         boolean isAppliedEverywhere = true;
         for (int i = start; i < end; i++) {
             BackgroundColorSpan[] spans = builder.getSpans(i, i + 1, BackgroundColorSpan.class);
             boolean found = false;
-            for (BackgroundColorSpan s : spans) if (s.getBackgroundColor() == color) found = true;
+            for (BackgroundColorSpan s : spans) {
+                if (s.getBackgroundColor() == color && (builder.getSpanFlags(s) & Spanned.SPAN_COMPOSING) == 0) {
+                    found = true;
+                    break;
+                }
+            }
             if (!found) { isAppliedEverywhere = false; break; }
         }
 
         BackgroundColorSpan[] spans = builder.getSpans(start, end, BackgroundColorSpan.class);
         for (BackgroundColorSpan span : spans) {
+            if ((builder.getSpanFlags(span) & Spanned.SPAN_COMPOSING) != 0) continue;
+
             int s = builder.getSpanStart(span);
             int e = builder.getSpanEnd(span);
             int c = span.getBackgroundColor();
@@ -127,9 +167,11 @@ public class SimpleStyling {
         if (!isAppliedEverywhere) builder.setSpan(new BackgroundColorSpan(color), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    private static void applySizeSpan(SpannableStringBuilder builder, int start, int end, int size) {
+    private static void applySizeSpan(Spannable builder, int start, int end, int size) {
         AbsoluteSizeSpan[] spans = builder.getSpans(start, end, AbsoluteSizeSpan.class);
         for (AbsoluteSizeSpan span : spans) {
+            if ((builder.getSpanFlags(span) & Spanned.SPAN_COMPOSING) != 0) continue;
+
             int s = builder.getSpanStart(span);
             int e = builder.getSpanEnd(span);
             int oldSize = span.getSize();
@@ -140,13 +182,12 @@ public class SimpleStyling {
         builder.setSpan(new AbsoluteSizeSpan(size), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    private static int getExistingSize(SpannableStringBuilder builder, int start, int end, int fallback) {
+    private static int getExistingSize(Spannable builder, int start, int end, int fallback) {
         AbsoluteSizeSpan[] spans = builder.getSpans(start, end, AbsoluteSizeSpan.class);
-        return spans.length > 0 ? spans[0].getSize() : fallback;
-    }
-
-    private static void trySetSpan(SpannableStringBuilder b, Class<?> clazz, int s, int e) {
-        try { b.setSpan(clazz.newInstance(), s, e, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE); } catch (Exception ignored) {}
+        for (AbsoluteSizeSpan s : spans) {
+            if ((builder.getSpanFlags(s) & Spanned.SPAN_COMPOSING) == 0) return s.getSize();
+        }
+        return fallback;
     }
 
     public static int[] autoselection(EditText editText) {
