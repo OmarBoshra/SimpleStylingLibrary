@@ -22,7 +22,7 @@ public class SimpleStyling {
      * @param TextSizeIncrement Step value for size change
      * @param HighLightColor    Color integer for highlighting
      */
-    public static void Format(int TypeOrSize, int SelectionStart, int SelectionEnd, final EditText EditTextName, int TextSizeIncrement, int HighLightColor) {
+    public static void format(int TypeOrSize, int SelectionStart, int SelectionEnd, final EditText EditTextName, int TextSizeIncrement, int HighLightColor) {
         if (SelectionStart < 0 || SelectionEnd > EditTextName.length() || SelectionStart >= SelectionEnd) return;
 
         int cursorStart = EditTextName.getSelectionStart();
