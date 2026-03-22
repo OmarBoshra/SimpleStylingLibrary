@@ -58,7 +58,7 @@ HighLightColor : required highlightColor of the text set to anything if the oper
             @Override
             public void onClick(View v) {
                 SimpleStyling.autoselection(TestEditText);
-                SimpleStyling.format(0, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
+                SimpleStyling.format(SimpleStyling.FormattingType.INCREMENTAL_SIZE, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
             }
         });
 //set type to 1
@@ -67,7 +67,7 @@ HighLightColor : required highlightColor of the text set to anything if the oper
             @Override
             public void onClick(View v) {
                 SimpleStyling.autoselection(TestEditText);
-                SimpleStyling.format(0, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,-6,0);
+                SimpleStyling.format(SimpleStyling.FormattingType.INCREMENTAL_SIZE, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,-6,0);
             }
         });
 
@@ -80,7 +80,7 @@ TyprOrSize WITHOUT WORRING ABOUT THE INCREMENT*/
             @Override
             public void onClick(View v) {
                 SimpleStyling.autoselection(TestEditText);
-                SimpleStyling.format(-1, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
+                SimpleStyling.format(SimpleStyling.FormattingType.BOLD, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
             }
         });
 
@@ -90,7 +90,7 @@ TyprOrSize WITHOUT WORRING ABOUT THE INCREMENT*/
             @Override
             public void onClick(View v) {
                 SimpleStyling.autoselection(TestEditText);
-                SimpleStyling.format(-2, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,getResources().getColor(R.color.HighlightColor));
+                SimpleStyling.format(SimpleStyling.FormattingType.HIGHLIGHT, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,getResources().getColor(R.color.HighlightColor));
             }
         });
 //set type to -3
@@ -98,7 +98,7 @@ TyprOrSize WITHOUT WORRING ABOUT THE INCREMENT*/
             @Override
             public void onClick(View v) {
                 SimpleStyling.autoselection(TestEditText);
-                SimpleStyling.format(-3, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
+                SimpleStyling.format(SimpleStyling.FormattingType.UNDERLINE, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
             }
         });
 
@@ -107,7 +107,7 @@ TyprOrSize WITHOUT WORRING ABOUT THE INCREMENT*/
             @Override
             public void onClick(View v) {
                 SimpleStyling.autoselection(TestEditText);
-                SimpleStyling.format(-4, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
+                SimpleStyling.format(SimpleStyling.FormattingType.ITALIC, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
             }
         });
 

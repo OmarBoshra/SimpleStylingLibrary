@@ -14,17 +14,21 @@ import android.widget.TextView;
 
 public class SimpleStyling {
 
+    public enum FormattingType {
+        BOLD, ITALIC, UNDERLINE, HIGHLIGHT, INCREMENTAL_SIZE, FIXED_SIZE
+    }
+
     /**
      * Applies formatting to the selected text in an EditText.
      *
-     * @param TypeOrSize        -1: Bold, -2: Highlight, -3: Underline, -4: Italic, 0: Step Size, >0: Fixed Size
+     * @param type              The type of formatting to apply
      * @param SelectionStart    Start of the selection range
      * @param SelectionEnd      End of the selection range
      * @param EditTextName      The target EditText
-     * @param TextSizeIncrement Step value for size change
+     * @param sizeValue         Value for size change (increment for INCREMENTAL_SIZE, absolute for FIXED_SIZE)
      * @param HighLightColor    Color integer for highlighting
      */
-    public static void format(int TypeOrSize, int SelectionStart, int SelectionEnd, final EditText EditTextName, int TextSizeIncrement, int HighLightColor) {
+    public static void format(FormattingType type, int SelectionStart, int SelectionEnd, final EditText EditTextName, int sizeValue, int HighLightColor) {
         if (SelectionStart < 0 || SelectionEnd > EditTextName.length() || SelectionStart >= SelectionEnd) return;
 
         Editable editable = EditTextName.getText();
@@ -33,17 +37,27 @@ public class SimpleStyling {
         int selectionStart = EditTextName.getSelectionStart();
         int selectionEnd = EditTextName.getSelectionEnd();
 
-        switch (TypeOrSize) {
-            case -1: toggleStyle(editable, SelectionStart, SelectionEnd, Typeface.BOLD); break;
-            case -4: toggleStyle(editable, SelectionStart, SelectionEnd, Typeface.ITALIC); break;
-            case -3: toggleSimpleSpan(editable, SelectionStart, SelectionEnd, UnderlineSpan.class); break;
-            case -2: toggleColorSpan(editable, SelectionStart, SelectionEnd, HighLightColor); break;
-            case 0:
-                int currentSize = getExistingSize(editable, SelectionStart, SelectionEnd, (int) EditTextName.getTextSize());
-                applySizeSpan(editable, SelectionStart, SelectionEnd, Math.max(1, currentSize + TextSizeIncrement));
+        switch (type) {
+            case BOLD:
+                toggleStyle(editable, SelectionStart, SelectionEnd, Typeface.BOLD);
                 break;
-            default:
-                if (TypeOrSize > 0) applySizeSpan(editable, SelectionStart, SelectionEnd, TypeOrSize);
+            case ITALIC:
+                toggleStyle(editable, SelectionStart, SelectionEnd, Typeface.ITALIC);
+                break;
+            case UNDERLINE:
+                toggleSimpleSpan(editable, SelectionStart, SelectionEnd, UnderlineSpan.class);
+                break;
+            case HIGHLIGHT:
+                toggleColorSpan(editable, SelectionStart, SelectionEnd, HighLightColor);
+                break;
+            case INCREMENTAL_SIZE:
+                int currentSize = getExistingSize(editable, SelectionStart, SelectionEnd, (int) EditTextName.getTextSize());
+                applySizeSpan(editable, SelectionStart, SelectionEnd, Math.max(1, currentSize + sizeValue));
+                break;
+            case FIXED_SIZE:
+                if (sizeValue > 0) {
+                    applySizeSpan(editable, SelectionStart, SelectionEnd, sizeValue);
+                }
                 break;
         }
 
