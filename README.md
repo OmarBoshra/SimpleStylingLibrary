@@ -9,7 +9,7 @@ Simple Library for styling text in a textEditor (EditText) in android
 
   [1]: https://i.stack.imgur.com/dEvqD.gif
 
-Ever wondered if there was just simple lightweight and efficent font styling library for a quick text editor .Well you've come to the right place with just [BOLD ,ITALLIC ,UNDERLINE ,HIGHLIGHTING AND TEXTSIZE] this library has whats neccessary for a basic clean text formatting
+Ever wondered if there was just simple lightweight and efficent font styling library for a quick text editor .Well you've come to the right place with just [BOLD, ITALIC, UNDERLINE, HIGHLIGHT, INCREMENTAL_SIZE, FIXED_SIZE] this library has whats neccessary for a basic clean text formatting
 
 
 
@@ -29,7 +29,7 @@ Add this to your module's build.gradle file (make sure the version matches the J
 ```java
 dependencies {
 	...
-	        implementation 'com.github.OmarBoshra:SimpleStylingLibrary:2.02'
+	        implementation 'com.github.OmarBoshra:SimpleStylingLibrary:2.03'
 }
 ```
 
@@ -39,20 +39,19 @@ dependencies {
 Just this one method 
 
 ```java
-  SimpleStyling.Format(TypeOrSize,SelectionStart,SelectionEnd, EditTextName ,TextSizeIncrement ,HighLightColor);
+  SimpleStyling.format(FormattingType, SelectionStart, SelectionEnd, EditTextName, sizeValue, HighLightColor);
 ```
 
 PARAMETERS
 
-   
-**TypeOrSize**: required operation to be performed on the selected text
+**FormattingType**: required operation to be performed on the selected text. It uses the `SimpleStyling.FormattingType` enum:
     
-    -1 makes text bold
-    -2 Highlights text provided the color is in integer 'HighLightColor'
-    -3 underline
-    -4 italic
-    0 Incremental increase/decrease of text size by amount of 'TextSizeIncrement'
-    (any size) changes text to a specific size
+    - BOLD: makes text bold
+    - ITALIC: makes text italic
+    - UNDERLINE: underlines text
+    - HIGHLIGHT: highlights text provided the color is in integer 'HighLightColor'
+    - INCREMENTAL_SIZE: Incremental increase/decrease of text size by amount of 'sizeValue'
+    - FIXED_SIZE: changes text to a specific size specified in 'sizeValue'
 
 **SelectionStart** : start of selection
 
@@ -60,9 +59,9 @@ PARAMETERS
 
 **EditTextName** : name of the editText View
 
-**TextSizeIncrement** : required incremental increase/decrease of text size +ve for increase and -ve for decrease
+**sizeValue** : required value for size change (increment for INCREMENTAL_SIZE, absolute for FIXED_SIZE). +ve for increase and -ve for decrease in incremental mode.
 
-**HighLightColor** : required highlightColor of the text set to anything if the operation isn't highLight
+**HighLightColor** : required highlightColor of the text set to anything if the operation isn't HIGHLIGHT
 
 
 The function 
@@ -71,7 +70,7 @@ SimpleStyling.autoselection(TestEditText);
 
 returns an array with the starting and ending indexies so a button click can be used this way:-
 ```java
-            SimpleStyling.Format(0, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1],TestEditText,6,0);
+            SimpleStyling.format(SimpleStyling.FormattingType.INCREMENTAL_SIZE, SimpleStyling.autoselection(TestEditText)[0], SimpleStyling.autoselection(TestEditText)[1], TestEditText, 6, 0);
 ```            
 #If you want to be sure you can see the underline, disable the textAutoCorrection this way:-
 ```java
@@ -83,5 +82,3 @@ This is an app with a full implementation here :-
 https://github.com/OmarBoshra/Simple-text-styling-Android/blob/master/README.md
 
 Good luck
-
-
