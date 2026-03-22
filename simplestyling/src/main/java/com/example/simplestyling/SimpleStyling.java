@@ -10,6 +10,7 @@ import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class SimpleStyling {
 
@@ -26,9 +27,11 @@ public class SimpleStyling {
     public static void format(int TypeOrSize, int SelectionStart, int SelectionEnd, final EditText EditTextName, int TextSizeIncrement, int HighLightColor) {
         if (SelectionStart < 0 || SelectionEnd > EditTextName.length() || SelectionStart >= SelectionEnd) return;
 
-        // Modifying the Editable directly is better for performance and IME compatibility
         Editable editable = EditTextName.getText();
         if (editable == null) return;
+
+        int selectionStart = EditTextName.getSelectionStart();
+        int selectionEnd = EditTextName.getSelectionEnd();
 
         switch (TypeOrSize) {
             case -1: toggleStyle(editable, SelectionStart, SelectionEnd, Typeface.BOLD); break;
@@ -43,6 +46,13 @@ public class SimpleStyling {
                 if (TypeOrSize > 0) applySizeSpan(editable, SelectionStart, SelectionEnd, TypeOrSize);
                 break;
         }
+
+        // Force a full layout rebuild by re-setting the text as a SPANNABLE buffer.
+        // This fixes the issue where lines overlap because DynamicLayout caches height incorrectly.
+        EditTextName.setText(editable, TextView.BufferType.SPANNABLE);
+        
+        // Restore selection to prevent the cursor from jumping to the start
+        EditTextName.setSelection(selectionStart, selectionEnd);
     }
 
     private static void toggleStyle(Spannable builder, int start, int end, int styleBit) {
@@ -51,7 +61,6 @@ public class SimpleStyling {
             StyleSpan[] spans = builder.getSpans(i, i + 1, StyleSpan.class);
             boolean found = false;
             for (StyleSpan s : spans) {
-                // Ignore system composing/spell-check spans
                 if ((s.getStyle() & styleBit) != 0 && (builder.getSpanFlags(s) & Spanned.SPAN_COMPOSING) == 0) {
                     found = true;
                     break;
@@ -77,7 +86,7 @@ public class SimpleStyling {
             if (newStyle != 0) builder.setSpan(new StyleSpan(newStyle), newInnerStart, newInnerEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        if (!isAppliedEverywhere) { // Fill gaps
+        if (!isAppliedEverywhere) {
             for (int i = start; i < end; ) {
                 StyleSpan[] current = builder.getSpans(i, i + 1, StyleSpan.class);
                 int next = end;
@@ -111,7 +120,6 @@ public class SimpleStyling {
         for (int i = start; i < end; i++) {
             boolean found = false;
             for (Object s : builder.getSpans(i, i + 1, spanClass)) {
-                // Filter out system underlines
                 if ((builder.getSpanFlags(s) & Spanned.SPAN_COMPOSING) == 0) {
                     found = true;
                     break;
