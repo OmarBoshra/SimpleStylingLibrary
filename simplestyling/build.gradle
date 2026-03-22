@@ -9,14 +9,15 @@ android {
         minSdkVersion 16
         targetSdkVersion 35
         versionCode 3
-        versionName "2.1"
-
+        versionName "2.2"
+        resConfigs "en"
         consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
